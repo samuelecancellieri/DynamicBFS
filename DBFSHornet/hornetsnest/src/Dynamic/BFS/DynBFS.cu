@@ -245,8 +245,7 @@ void DynBFS::batch_update_undirected(vert_t* update_src, vert_t* update_dst, int
     //recheck for updated distances
     queue2.clear();
     queue2.insert(update_src,update_size); //insert update batch in temp queue
-    forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
-    
+    // forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
     //final insertion in BFS queue
     forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue});
 
