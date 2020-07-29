@@ -235,7 +235,7 @@ void DynBFS::batch_update_undirected(vert_t* update_src, vert_t* update_dst, int
     forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb); //find lowest father for each modified vertex
     // forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue}); //update distance based on lowest father
     forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
-    forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
+    // forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
 
     //UPDATE DISTANCES BASED ON DST 
     // queue2.clear();
