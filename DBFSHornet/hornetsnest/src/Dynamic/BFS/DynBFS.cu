@@ -223,36 +223,35 @@ void DynBFS::batch_update_directed(vert_t* update_dst,int update_size)
 
 void DynBFS::batch_update_undirected(vert_t* update_src, vert_t* update_dst, int update_size)
 {
+    queue.clear(); //BFS queue clear
+    
     //UPDATE DISTANCES BASED ON SRC
-    queue.clear(); //bfs queue clear
     queue2.clear(); //temp queue clear
     queue2.insert(update_src,update_size); //insert update batch in temp queue
-    queue2.insert(update_dst,update_size); //insert update batch in temp queue
 
     std::cout<<"VERTICES IN UPDATE QUEUE "<<queue2.size()<<"\n";
 
     forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb); //find lowest father for each modified vertex
-    forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb); //find lowest father for each modified vertex
     // forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue}); //update distance based on lowest father
 
-    // //UPDATE DISTANCES BASED ON DST 
-    // queue2.clear();
-    // queue2.insert(update_dst,update_size);
+    //UPDATE DISTANCES BASED ON DST 
+    queue2.clear();
+    queue2.insert(update_dst,update_size);
 
-    // std::cout<<"VERTICES IN UPDATE QUEUE "<<queue2.size()<<"\n";
+    std::cout<<"VERTICES IN UPDATE QUEUE "<<queue2.size()<<"\n";
 
-    // forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
-    // // forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue});
-
-    // //recheck for updated distances
-    // queue2.clear();
-    // queue2.insert(update_src,update_size); //insert update batch in temp queue
-    // // forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
-    // //final insertion in BFS queue
+    forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
     // forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue});
 
-    // queue2.clear();
-    // queue2.insert(update_dst,update_size); //insert update batch in temp queue
+    //recheck for updated distances after fatherupdate DST
+    queue2.clear();
+    queue2.insert(update_src,update_size); //insert update batch in temp queue
+    forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
+    //final insertion in BFS queue
+    forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue});
+
+    queue2.clear();
+    queue2.insert(update_dst,update_size); //insert update batch in temp queue
     //final insertion in BFS queue
     forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue});
 
