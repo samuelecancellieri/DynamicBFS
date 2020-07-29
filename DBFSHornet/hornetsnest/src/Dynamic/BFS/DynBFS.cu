@@ -226,7 +226,7 @@ void DynBFS::batch_update_undirected(vert_t* update_src, vert_t* update_dst, int
     //UPDATE DISTANCES BASED ON SRC
     queue.clear(); //bfs queue clear
     queue.insert(update_src,update_size);
-    queue.insert(update_dst,update_size);
+    queue.insert(update_src,update_size);
     // queue2.clear(); //temp queue clear
     // queue2.insert(update_src,update_size); //insert update batch in temp queue
 
