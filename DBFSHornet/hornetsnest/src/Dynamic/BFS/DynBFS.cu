@@ -226,8 +226,12 @@ void DynBFS::batch_update_undirected(vert_t* update_src, vert_t* update_dst, int
     //UPDATE DISTANCES BASED ON SRC
     queue.clear(); //bfs queue clear
     queue2.clear(); //temp queue clear
-    queue2.insert(update_src,update_size);
-    queue2.insert(update_dst,update_size);
+    vert_t* all_update = new vert_t[update_size*2]();
+    std::copy(update_src, update_src + update_size, all_update);
+    std::copy(update_dst, update_dst + update_size, all_update + update_size);
+    // queue2.insert(update_src,update_size);
+    // queue2.insert(update_dst,update_size);
+    queue2.insert(all_update,update_size*2);
 
     std::cout<<"VERTICES IN UPDATE QUEUE "<<queue2.size()<<"\n";
 
