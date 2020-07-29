@@ -13,18 +13,6 @@ namespace hornets_nest
 // OPERATORS //
 ///////////////
 
-struct QueueInsertion
-{
-    // vert_t* batch;
-    TwoLevelQueue<vert_t> queue2;
-
-    OPERATOR(Vertex vertex)
-    {
-        auto vert = vertex.id();
-        queue2.insert(vert);
-    }
-};
-
 struct ResetDistance
 {
     dist_t* d_distances;
@@ -238,24 +226,19 @@ void DynBFS::batch_update_undirected(vert_t* update_src, vert_t* update_dst, int
     //UPDATE DISTANCES BASED ON SRC
     queue.clear(); //bfs queue clear
     queue2.clear(); //temp queue clear
-    vert_t* d_update_batch;
-    cudaMalloc(&d_update_batch, sizeof(vert_t)*update_size);
-    cudaMemcpy(d_update_batch, update_src, sizeof(vert_t)*update_size, cudaMemcpyHostToDevice);
+    queue2.insert(update_src,update_size);
 
-    forAllVertices(hornet, d_update_batch, update_size, QueueInsertion{queue2}); //reset distances for each interested vertices in batch
-    queue2.swap();
     std::cout<<"VERTICES IN UPDATE QUEUE "<<queue2.size()<<"\n";
+
     forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb); //find lowest father for each modified vertex
     forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue}); //update distance based on lowest father
 
     //UPDATE DISTANCES BASED ON DST 
     queue2.clear();
-    cudaMemcpy(d_update_batch, update_dst, sizeof(vert_t)*update_size, cudaMemcpyHostToDevice);
-    forAllVertices(hornet, d_update_batch, update_size, QueueInsertion{queue2}); //reset distances for each interested vertices in batch
-    queue2.swap();
+    queue2.insert(update_dst,update_size);
+
     std::cout<<"VERTICES IN UPDATE QUEUE "<<queue2.size()<<"\n";
 
-    // forAllVertices(hornet, queue2, ResetDistance{d_distances});
     forAllEdges(hornet, queue2, FatherUpdate {d_distances, old_distances}, lrb_lb);
     forAllVertices(hornet, queue2, LowestFather {d_distances, old_distances, queue});
 }
